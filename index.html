@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+<meta name="description" content="StecuOS - Secure Technology Operating System for enhanced computer security"/>
+<title>StecuOS</title>
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://unpkg.com">
+
+<!-- AOS Animation CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: montserrat, sans-serif;
+    background: linear-gradient(to right, #1f1f1f, #2c3e50);
+    color: white;
+  }
+  
+  /* Info Popup Styles */
+  .info-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .info-popup-content {
+    background: linear-gradient(145deg, #2c3e50, #1f1f1f);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 2rem;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    animation: popIn 0.4s ease-out;
+  }
+  
+  .info-popup-content h2 {
+    margin-bottom: 1.5rem;
+    color: #4db6ff;
+    border-bottom: 2px solid rgba(77, 182, 255, 0.3);
+    padding-bottom: 0.5rem;
+  }
+  
+  .info-popup-content h3 {
+    margin: 1.5rem 0 0.7rem;
+    color: #4db6ff;
+  }
+  
+  .info-popup-body {
+    line-height: 1.6;
+  }
+  
+  .info-popup-body p {
+    margin-bottom: 1rem;
+    color: #eee;
+  }
+  
+  .info-popup-body ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .info-popup-body li {
+    margin-bottom: 0.5rem;
+    color: #ddd;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.1);
+    transition: background-color 0.3s;
+  }
+  
+  .close-btn:hover {
+    background-color: rgba(255,255,255,0.3);
+  }
+
+  header {
+    background-color: transparent;
+    position: fixed;
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Header background when scrolled */
+  header.scrolled {
+    background-color: rgba(31, 31, 31, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .logo img {
+    height: 30px;
+  }
+
+  nav a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(to bottom, rgb(77, 75, 75) , rgba(83, 82, 82, 0));
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .hero {
+    background-image: url('pict/WhatsApp Image 2025-05-01 at 12.22.40_0947b3ce.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    position: relative;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to top, #222 2%, rgba(88, 88, 88, 0));
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    z-index: 2;
+    max-width: 500px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-content p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #ddd;
+  }
+
+  .buttons {
+    margin-top: 1rem;
+  }
+
+  .buttons button {
+    background-color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    margin-right: 0.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .buttons button:hover {
+    background-color: white;
+  }
+
+  .buttons .info {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: white;
+  }
+
+  /* Audio player */
+  .music-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 30px;
+    padding: 10px 15px;
+    display: none;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  .music-controls.active {
+    display: flex;
+  }
+
+  .music-controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin: 0 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+  }
+
+  .music-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .music-controls .song-info {
+    color: white;
+    margin-left: 10px;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-content {
+      bottom: 30px;
+      left: 20px;
+      right: 20px;
+      max-width: calc(100% - 40px);
+    }
+
+    .hero-content h1 {
+      font-size: 1.5rem;
+    }
+    
+    .hero-content p {
+      font-size: 0.85rem;
+    }
+    
+    .buttons button {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .info-popup-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+    
+    .info-popup-content h2 {
+      font-size: 1.3rem;
+    }
+    
+    .music-controls {
+      bottom: 10px;
+      right: 10px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+    
+    .music-controls .song-info {
+      font-size: 0.7rem;
+    }
+    
+    nav {
+      display: none;
+    }
+    
+    header {
+      justify-content: center;
+    }
+  }
+  
+  /* Styles for tablets */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    section#produk {
+      padding: 100px 50px 50px;
+    }
+    
+    .produk-container {
+      gap: 20px;
+    }
+    
+    .team-title {
+      font-size: 1.5rem;
+    }
+  }
+  
+  /* Mobile menu styles */
+  .mobile-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 99999999999999;
+  }
+  
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(31, 31, 31, 0.95);
+    z-index: 15;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .mobile-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin: 15px 0;
+    transition: color 0.3s;
+  }
+  
+  .mobile-nav a:hover {
+    color: #4db6ff;
+  }
+  
+  @media (max-width: 768px) {
+    .mobile-menu-button {
+      display: block;
+    }
+    
+    .mobile-nav.active {
+      display: flex;
+    }
+  }
+
+  section#produk {
+    position: relative;
+    padding: 120px 150px 60px;
+    background-color: #333232;
+    color: #222;
+    min-height: 100vh;
+    overflow: hidden;   
+  }
+  
+  @media (max-width: 768px) {
+    section#produk {
+      padding: 100px 20px 50px;
+    }
+  }
+
+  .section-title-container {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Team title with rotating text - IMPROVED LAYOUT */
+  .team-title {
+    text-align: center;
+    margin-bottom: 70px;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 10px 2px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    font-size: 1.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    color: #ffffff;
+    min-width: 250px;
+    padding-left: 38px;  /* Set a minimum width */
+  }
+
+  .team-title .rotate-word {
+    display: inline-block;
+    position: relative;
+    min-width: 120px; /* Increase width */
+    text-align: left; /* Align text to left */
+    height: 30px;
+    overflow: hidden;
+    margin-left: 10px;; /* Add space between "TEAM" and the rotating words */
+  }
+
+  .team-title .rotate-word span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    transition: all 0.6s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    text-align: left;
+    margin-top: 5px; /* Ensure text is left-aligned */
+  }
+
+  .team-title .rotate-word span.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .team-title .rotate-word span.exit {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  .produk-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .produk-card {
+    background-color: #fff;
+    border-radius: 12px;
+    width: 220px;
+    height: 320px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .produk-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  }
+
+  .produk-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+  }
+
+  .produk-card h3 {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin: 0;
+    padding: 15px 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6));
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    z-index: 2;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .popup-overlay img {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    animation: popIn 0.3s ease-in-out;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  canvas#squaresCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    cursor: pointer;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    color: #aaa;
+    background-color: #1f1f1f;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="pict/watermark - Copy (2).png" alt="Logo" />
+  </div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#produk">Team</a>
+    <a href="#">Layanan</a>
+    <a href="#">Informasi</a>
+    <a href="#">Kontak</a>
+  </nav>
+  <button class="mobile-menu-button" id="mobileMenuBtn">≡</button>
+</header>
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#">Home</a>
+  <a href="#produk">Team</a>
+  <a href="#">Layanan</a>
+  <a href="#">Informasi</a>
+  <a href="#">Kontak</a>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>StecuOS</h1>
+    <p>StecuOS singkatan dari secure technology operating system yang dibuat untuk melindungi keamanan komputer menjadi lebih kuat.<br/>
+    Tekan Play untuk mendengarkan musik.</p>
+    <div class="buttons">
+      <button id="playButton">▶ Play</button>
+      <button class="info">More Info</button>
+    </div>
+  </div>
+</section>
+
+<!-- Music Player Controls -->
+<div class="music-controls" id="musicControls">
+  <button id="pauseButton">⏸️</button>
+  <button id="stopButton">⏹️</button>
+  <div class="song-info">Now Playing: StecuOS Theme</div>
+</div>  
+
+<!-- Hidden audio element -->
+<audio id="bgMusic" preload="auto">
+  <source src="music/tiktokio.com_D93XKHxYLG2YPGi3nEWe.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<section id="produk">
+  <div id="canvasContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; cursor: pointer;">
+    <canvas id="squaresCanvas"></canvas>
+  </div>
+  <div class="section-title-container">
+    <!-- Updated team title with better layout -->
+    <h2 class="team-title">
+      TEAM<div class="rotate-word">
+        <span class="active">KAMI</span>
+        <span>TUJUH</span>
+      </div>
+    </h2>
+  </div>
+  <div class="produk-container">
+    <div class="produk-card" data-aos="zoom-in" data-aos-duration="1000">
+      <img src="pict/WhatsApp Image 2025-04-30 at 13.47.30_8854766c.jpg" alt="Tempat Penyimpanan">
+      <h3>Taufik Ramadhani</h3>
+    </div>
+    <div class="produk-card" data-aos="zoom-in" data-aos-duration="1000">
+      <div class="glow-line"></div>
+      <img src="pict/WhatsApp Image 2025-05-01 at 13.37.10_d5c60664.jpg" alt="Lemari">
+      <h3>Dwi Pebriyanto Pradana</h3>
+    </div>
+    <div class="produk-card" data-aos="zoom-in" data-aos-duration="1000">
+      <div class="glow-line"></div>
+      <img src="pict/WhatsApp Image 2025-05-01 at 15.04.41_07873856.jpg" alt="Sofa">
+      <h3>Adella Putri</h3>
+    </div>
+    <div class="produk-card" data-aos="zoom-in" data-aos-duration="1000">
+      <div class="glow-line"></div>
+      <img src="pict/WhatsApp Image 2025-05-01 at 13.48.58_033d5003.jpg" alt="Spring Bed">
+      <h3>Syauqi Etna Lazhuardy</h3>
+    </div>
+  </div>
+</section>
+
+<div class="popup-overlay" id="popup">
+  <img src="" alt="Popup Gambar" id="popup-img" />
+</div>
+
+<!-- New Info Popup -->
+<div class="info-popup-overlay" id="infoPopup">
+  <div class="info-popup-content">
+    <button class="close-btn" id="closeInfoBtn">&times;</button>
+    <h2>About StecuOS</h2>
+    <div class="info-popup-body">
+      <p>StecuOS adalah singkatan dari <strong>Secure Technology Operating System</strong> yang dikembangkan oleh Kelompok 7 mahasiswa Sistem Informasi Angkatan 2024.</p>
+      
+      <p>Sistem operasi ini dirancang dengan fokus utama pada keamanan komputer yang ditingkatkan. StecuOS menawarkan tampilan yang mudah dipahami dan perlindungan tingkat lanjut terutama pada manajemen file.</p>
+      
+      <h3>Fitur Utama:</h3>
+      <ul>
+        <li>Bebas iklan</li>
+        <li>Tampilan MacOS</li>
+        <li>Memantau lalu lintas jaringan</li>
+        <li>Manajemen file yang kuat dan aman</li>
+      </ul>
+      
+      <p>StecuOS dikembangkan sebagai alternatif yang lebih aman dari sistem operasi konvensional, dengan tetap mempertahankan kemudahan penggunaan dan kompatibilitas dengan aplikasi populer.</p>
+      
+      <p>Untuk informasi lebih lanjut atau untuk berpartisipasi dalam program beta, silakan hubungi Kelompok kami.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 StecuOS - Badan Siber dan Sandi Negara | Kelompok 7
+</footer>
+
+<!-- AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  // Team title rotating text - FIXED ANIMATION
+  document.addEventListener('DOMContentLoaded', function() {
+    const textElements = document.querySelectorAll('.rotate-word span');
+    let currentIndex = 0;
+    
+    function rotateText() {
+      // Hide all text elements
+      textElements.forEach(el => {
+        el.classList.remove('active');
+        el.classList.remove('exit');
+      });
+      
+      // Show the current text element
+      textElements[currentIndex].classList.add('active');
+      
+      // Update the index for the next rotation
+      currentIndex = (currentIndex + 1) % textElements.length;
+    }
+    
+    // Start the rotation
+    setInterval(rotateText, 3000);
+    
+    // Initialize AOS
+    AOS.init({
+      once: false,
+      disable: 'false',
+      duration: 700,
+      offset: 100
+    });
+    
+    // Reinitialize AOS on window resize
+    window.addEventListener('resize', function() {
+      AOS.refresh();
+    });
+  });
+
+  // Music Player Functionality
+  const bgMusic = document.getElementById('bgMusic');
+  const playButton = document.getElementById('playButton');
+  const pauseButton = document.getElementById('pauseButton');
+  const stopButton = document.getElementById('stopButton');
+  const musicControls = document.getElementById('musicControls');
+
+  // Play button functionality
+  playButton.addEventListener('click', () => {
+    bgMusic.play()
+      .then(() => {
+        musicControls.classList.add('active');
+      })
+      .catch(error => {
+        console.error('Error playing audio:', error);
+        alert('Unable to play audio. Please ensure you have a music file at "music/background-music.mp3"');
+      });
+  });
+
+  // Pause button functionality
+  pauseButton.addEventListener('click', () => {
+    if (!bgMusic.paused) {
+      bgMusic.pause();
+      pauseButton.textContent = '▶️';
+    } else {
+      bgMusic.play();
+      pauseButton.textContent = '⏸️';
+    }
+  });
+
+  // Stop button functionality
+  stopButton.addEventListener('click', () => {
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    musicControls.classList.remove('active');
+    pauseButton.textContent = '⏸️';
+  });
+
+  // End of music player functionality
+
+  // Pop-up for images
+  const popup = document.getElementById("popup");
+  const popupImg = document.getElementById("popup-img");
+
+  document.querySelectorAll(".produk-card img").forEach(img => {
+    img.addEventListener("click", () => {
+      popupImg.src = img.src;
+      popup.style.display = "flex";
+    });
+  });
+
+  popup.addEventListener("click", () => {
+    popup.style.display = "none";
+  });
+  
+  // Info Pop-up
+  const infoPopup = document.getElementById("infoPopup");
+  const infoButton = document.querySelector(".info");
+  const closeInfoBtn = document.getElementById("closeInfoBtn");
+  
+  infoButton.addEventListener("click", () => {
+    infoPopup.style.display = "flex";
+  });
+  
+  closeInfoBtn.addEventListener("click", () => {
+    infoPopup.style.display = "none";
+  });
+  
+  // Close info popup when clicking outside content area
+  infoPopup.addEventListener("click", (e) => {
+    if (e.target === infoPopup) {
+      infoPopup.style.display = "none";
+    }
+  });
+  
+  // Close info popup with ESC key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && infoPopup.style.display === "flex") {
+      infoPopup.style.display = "none";
+    }
+  });
+
+  // Mobile menu functionality
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileNav.classList.toggle('active');
+    mobileMenuBtn.textContent = mobileNav.classList.contains('active') ? '×' : '≡';
+  });
+  
+  // Close mobile menu when clicking on a link
+  document.querySelectorAll('.mobile-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileNav.classList.remove('active');
+      mobileMenuBtn.textContent = '≡';
+    });
+  });
+  
+  // Header background change on scroll
+  const header = document.querySelector('header');
+  
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+  
+  // Add viewport meta tag for better responsiveness if not already present
+  if (!document.querySelector('meta[name="viewport"]')) {
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.getElementsByTagName('head')[0].appendChild(meta);
+  }
+  
+  // Check for touch events to enhance mobile experience
+  const isTouchDevice = () => {
+    return (('ontouchstart' in window) ||
+       (navigator.maxTouchPoints > 0) ||
+       (navigator.msMaxTouchPoints > 0));
+  }
+  
+  if (isTouchDevice()) {
+    document.body.classList.add('touch-device');
+  }
+
+  // Squares Animation with Click Functionality
+  (() => {
+    const canvas = document.getElementById('squaresCanvas');
+    const canvasContainer = document.getElementById('canvasContainer');
+    const ctx = canvas.getContext('2d');
+
+    const squareSize = 45;
+    const speed = 0.1;
+    const direction = 'diagonal';
+    const borderColor = '#fff';
+    const hoverFillColor = '#1e90ff';
+    const clickedFillColor = '#ff0000';
+    const gridOffset = { x: 0, y: 0 };
+    let hoveredSquare = null;
+    let clickedSquares = [];
+
+    const resizeCanvas = () => {
+      canvas.width = canvasContainer.offsetWidth;
+      canvas.height = canvasContainer.offsetHeight;
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const drawGrid = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const startX = Math.floor(gridOffset.x / squareSize) * squareSize;
+      const startY = Math.floor(gridOffset.y / squareSize) * squareSize;
+
+      for (let x = startX; x < canvas.width + squareSize; x += squareSize) {
+        for (let y = startY; y < canvas.height + squareSize; y += squareSize) {
+          const squareX = x - (gridOffset.x % squareSize);
+          const squareY = y - (gridOffset.y % squareSize);
+
+          const col = Math.floor((x - startX) / squareSize);
+          const row = Math.floor((y - startY) / squareSize);
+          
+          // Check if this square has been clicked
+          const isClicked = clickedSquares.some(square => 
+            square.x === col && square.y === row
+          );
+
+          if (isClicked) {
+            // Draw clicked square
+            ctx.fillStyle = clickedFillColor;
+            ctx.fillRect(squareX, squareY, squareSize, squareSize);
+          } else if (hoveredSquare && hoveredSquare.x === col && hoveredSquare.y === row) {
+            // Draw hovered square
+            ctx.fillStyle = hoverFillColor;
+            ctx.fillRect(squareX, squareY, squareSize, squareSize);
+          }
+
+          ctx.strokeStyle = borderColor;
+          ctx.strokeRect(squareX, squareY, squareSize, squareSize);
+        }
+      }
+    };
+
+    const animate = () => {
+      switch (direction) {
+        case 'diagonal':
+          gridOffset.x -= speed;
+          gridOffset.y -= speed;
+          break;
+      }
+
+      gridOffset.x %= squareSize;
+      gridOffset.y %= squareSize;
+
+      drawGrid();
+      requestAnimationFrame(animate);
+    };
+
+    canvasContainer.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const startX = Math.floor(gridOffset.x / squareSize) * squareSize;
+      const startY = Math.floor(gridOffset.y / squareSize) * squareSize;
+
+      hoveredSquare = {
+        x: Math.floor((mouseX + gridOffset.x - startX) / squareSize),
+        y: Math.floor((mouseY + gridOffset.y - startY) / squareSize)
+      };
+    });
+
+    canvasContainer.addEventListener('click', (e) => {
+      if (hoveredSquare) {
+        // Check if the square is already clicked
+        const existingIndex = clickedSquares.findIndex(square => 
+          square.x === hoveredSquare.x && square.y === hoveredSquare.y
+        );
+        
+        if (existingIndex >= 0) {
+          // Remove if already clicked (toggle off)
+          clickedSquares.splice(existingIndex, 1);
+        } else {
+          // Add to clicked squares
+          clickedSquares.push({...hoveredSquare});
+        }
+      }
+    });
+
+    canvasContainer.addEventListener('mouseleave', () => {
+      hoveredSquare = null;
+    });
+
+    animate();
+  })();
+</script>
+
+</body>
+</html>
